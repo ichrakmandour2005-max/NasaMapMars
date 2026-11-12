@@ -35,6 +35,15 @@
   }
   button.poi:hover { border-color: var(--sky); }
   button.poi:focus-visible, input:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+  .zoombar { display: flex; gap: 6px; }
+  .zoombar button {
+    flex: 0 0 44px; height: 40px; font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+    background: transparent; color: var(--sand); border: 1px solid var(--panel-line); border-radius: 6px;
+  }
+  .zoombar button#zoomReset { flex: 1; font-size: 14px; }
+  .zoombar button:hover { border-color: var(--sky); }
+  .zoombar button:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+  #alt { margin-top: 6px; font-size: 12px; color: var(--muted); }
   #info { margin-top: 12px; font-size: 13px; color: var(--muted); line-height: 1.45; min-height: 2.8em; }
   #status { margin-top: 10px; font-size: 12px; color: #e8a58f; }
   @media (max-width: 600px) { #panel { width: calc(100% - 24px); max-height: 45%; } }
@@ -50,8 +59,18 @@
   <h2>Couches de données</h2>
   <div id="layers"></div>
 
+  <h2>Zoom</h2>
+  <div class="zoombar">
+    <button id="zoomOut" aria-label="Dézoomer">−</button>
+    <button id="zoomIn" aria-label="Zoomer">+</button>
+    <button id="zoomReset" aria-label="Revenir à la vue globale">Vue globale</button>
+  </div>
+  <div id="alt">Altitude : –</div>
+
   <h2>Zones d'intérêt</h2>
   <div id="pois"></div>
+
+  <div id="route-ui"></div>
 
   <div id="info">Clique sur une zone pour t'y rendre.</div>
   <div id="status"></div>
@@ -71,7 +90,9 @@ const TREK = "https://trek.nasa.gov/tiles/Mars/EQ";
 const LAYERS = [
   { id: "viking", label: "Imagerie couleur (Viking)",   name: "Viking_MDIM21_ClrMosaic_global_232m",       ext: "jpg", level: 7, on: true,  alpha: 1.0 },
   { id: "mola",   label: "Relief coloré (MOLA)",        name: "Mars_MGS_MOLA_ClrShade_merge_global_463m",  ext: "jpg", level: 6, on: false, alpha: 0.7 },
-  { id: "themis", label: "Thermique infrarouge (THEMIS)", name: "Mars_MO_THEMIS-IR-Day_mosaic_global_100m_v12", ext: "png", level: 8, on: false, alpha: 0.7 }
+  // Identifiant exact lu dans le catalogue Mars Trek. Couverture limitée à ±65° de latitude.
+  // Si la couche reste vide, change ext en "jpg" (ou l'inverse) : voir le lien WMTS Endpoint du catalogue.
+  { id: "themis", label: "Thermique infrarouge (THEMIS)", name: "THEMIS_DayIR_ControlledMosaics_100m_v2_oct2018", ext: "png", level: 7, on: false, alpha: 0.7 }
 ];
 
 // Zones d'intérêt (latitude, longitude Est positive ou négative)
@@ -99,6 +120,30 @@ viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#6b3a28");
 viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#120c0a");
 
 viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(60, 10, 2.4e7) });
+
+/* ============ 2b. Zoom ============ */
+
+// Limites : on peut s'approcher jusqu'à 2 km du sol et s'éloigner jusqu'à 40 000 km
+const controller = viewer.scene.screenSpaceCameraController;
+controller.minimumZoomDistance = 2000;
+controller.maximumZoomDistance = 4.0e7;
+
+const GLOBAL_VIEW = Cesium.Cartesian3.fromDegrees(60, 10, 2.4e7);
+const cameraHeight = () => viewer.camera.positionCartographic.height;
+
+document.getElementById("zoomIn").addEventListener("click", () => viewer.camera.zoomIn(cameraHeight() * 0.4));
+document.getElementById("zoomOut").addEventListener("click", () => viewer.camera.zoomOut(cameraHeight() * 0.6));
+document.getElementById("zoomReset").addEventListener("click", () => {
+  viewer.camera.flyTo({ destination: GLOBAL_VIEW, duration: 2 });
+});
+
+// Affiche l'altitude de la caméra (utile pour savoir à quelle échelle on regarde)
+const altLabel = document.getElementById("alt");
+viewer.camera.changed.addEventListener(() => {
+  const km = cameraHeight() / 1000;
+  altLabel.textContent = "Altitude : " + (km >= 100 ? Math.round(km).toLocaleString("fr-FR") : km.toFixed(1)) + " km";
+});
+viewer.camera.percentageChanged = 0.05;
 
 /* ============ 3. Couches de données ============ */
 
@@ -164,8 +209,9 @@ POIS.forEach(p => {
   });
   poiBox.appendChild(btn);
 });
-
-
 </script>
+
+<!-- Module de trajet (fichier séparé, doit rester APRÈS le script ci-dessus) -->
+<script src="route.js"></script>
 </body>
 </html>
