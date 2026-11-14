@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mars 3D – planificateur de sortie</title>
+<link rel="stylesheet" href="style.css">
+
+<!-- CesiumJS (si 404, change le numéro de version dans les 2 lignes) -->
+<script src="https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/Cesium.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cesium@1.121.1/Build/Cesium/Widgets/widgets.css">
+
+<style>
+  :root {
+    --panel: #2a1d19;
+    --panel-line: #4a352d;
+    --sand: #f1e4d6;
+    --muted: #b9a594;
+    --sky: #7fb3d5;
+  }
+  html, body { margin: 0; height: 100%; background: #120c0a; font-family: system-ui, "Segoe UI", sans-serif; color: var(--sand); }
+  #map { position: absolute; inset: 0; }
+  #panel {
+    position: absolute; top: 12px; left: 12px; width: 300px; max-height: calc(100% - 24px); overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--panel-line); border-radius: 10px; padding: 16px;
+    box-sizing: border-box; z-index: 10;
+  }
+  h1 { font-size: 18px; margin: 0 0 4px; font-weight: 650; }
+  .sub { margin: 0 0 14px; font-size: 13px; color: var(--muted); line-height: 1.4; }
+  h2 { font-size: 14px; margin: 16px 0 8px; font-weight: 600; }
+  label.layer { display: flex; align-items: center; gap: 8px; padding: 6px 0; font-size: 14px; cursor: pointer; }
+  .opacity { width: 100%; margin: 0 0 6px; accent-color: var(--sky); }
+  button.poi {
+    display: block; width: 100%; text-align: left; margin: 0 0 6px; padding: 8px 10px; font: inherit; font-size: 14px;
+    background: transparent; color: var(--sand); border: 1px solid var(--panel-line); border-radius: 6px; cursor: pointer;
+  }
+  button.poi:hover { border-color: var(--sky); }
+  button.poi:focus-visible, input:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+  .zoombar { display: flex; gap: 6px; }
+  .zoombar button {
+    flex: 0 0 44px; height: 40px; font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+    background: transparent; color: var(--sand); border: 1px solid var(--panel-line); border-radius: 6px;
+  }
+  .zoombar button#zoomReset { flex: 1; font-size: 14px; }
+  .zoombar button:hover { border-color: var(--sky); }
+  .zoombar button:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+  #alt { margin-top: 6px; font-size: 12px; color: var(--muted); }
+  #info { margin-top: 12px; font-size: 13px; color: var(--muted); line-height: 1.45; min-height: 2.8em; }
+  #status { margin-top: 10px; font-size: 12px; color: #e8a58f; }
+  @media (max-width: 600px) { #panel { width: calc(100% - 24px); max-height: 45%; } }
+</style>
+</head>
+<body>
+<div id="map"></div>
+
+<aside id="panel">
+  <h1>Mars en 3D</h1>
+  <p class="sub">Choisis une zone, active les couches de données et prépare une sortie.</p>
+
+  <div id="mission-ui"></div>
+
+  <h2>Couches de données</h2>
+  <div id="layers"></div>
+
+  <h2>Zoom</h2>
+  <div class="zoombar">
+    <button id="zoomOut" aria-label="Dézoomer">−</button>
+    <button id="zoomIn" aria-label="Zoomer">+</button>
+    <button id="zoomReset" aria-label="Revenir à la vue globale">Vue globale</button>
+  </div>
+  <div id="alt">Altitude : –</div>
+
+  <h2>Zones d'intérêt</h2>
+  <div id="pois"></div>
+
+  <div id="route-ui"></div>
+  <div id="safety-ui"></div>
+
+  <div id="info">Clique sur une zone pour t'y rendre.</div>
+  <div id="status"></div>
+</aside>
+
+<script>
+/* ============ 1. Configuration : tout ce que tu modifieras ============ */
+
+// Mars : rayon équatorial et polaire en mètres
+const MARS = new Cesium.Ellipsoid(3396190, 3396190, 3376200);
+Cesium.Ellipsoid.default = MARS;
+
+// Couches Mars Trek. Les noms viennent du catalogue :
+// https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars
+// Vérifie chaque nom dans le catalogue et ajuste "level" (zoom max) si des tuiles manquent.
+const TREK = "https://trek.nasa.gov/tiles/Mars/EQ";
+const LAYERS = [
+  { id: "viking", label: "Imagerie couleur (Viking)",   name: "Viking_MDIM21_ClrMosaic_global_232m",       ext: "jpg", level: 7, on: true,  alpha: 1.0 },
+  { id: "mola",   label: "Relief coloré (MOLA)",        name: "Mars_MGS_MOLA_ClrShade_merge_global_463m",  ext: "jpg", level: 6, on: false, alpha: 0.7 },
+  // Identifiant exact lu dans le catalogue Mars Trek. Couverture limitée à ±65° de latitude.
+  // Si la couche reste vide, change ext en "jpg" (ou l'inverse) : voir le lien WMTS Endpoint du catalogue.
+  { id: "themis", label: "Thermique infrarouge (THEMIS)", name: "THEMIS_DayIR_ControlledMosaics_100m_v2_oct2018", ext: "png", level: 7, on: false, alpha: 0.7 }
+];
+
+// Zones d'intérêt (latitude, longitude Est positive ou négative)
+const POIS = [
+  { name: "Cratère Gale – mont Sharp",  lat: -5.4,  lon: 137.8,  note: "Zone explorée par Curiosity, où des formations « boxwork » ont été étudiées." },
+  { name: "Cratère Jezero",             lat: 18.4,  lon: 77.5,   note: "Ancien delta de rivière, exploré par Perseverance." },
+  { name: "Olympus Mons",               lat: 18.65, lon: -133.8, note: "Le plus grand volcan connu du système solaire." },
+  { name: "Valles Marineris",           lat: -14.0, lon: -59.0,  note: "Système de canyons long de plusieurs milliers de kilomètres." }
+];
+
+/* ============ 2. Création du globe ============ */
+
+const viewer = new Cesium.Viewer("map", {
+  baseLayer: false,                       // pas d'imagerie terrestre
+  globe: new Cesium.Globe(MARS),
+  mapProjection: new Cesium.GeographicProjection(MARS),
+  baseLayerPicker: false, geocoder: false, homeButton: false, sceneModePicker: false,
+  navigationHelpButton: false, animation: false, timeline: false, fullscreenButton: false,
+  infoBox: false, selectionIndicator: false,
+  skyAtmosphere: false, skyBox: false       // pas d'atmosphère ni de ciel terrestres
+});
+if (viewer.scene.skyAtmosphere) viewer.scene.skyAtmosphere.show = false;
+viewer.scene.globe.showGroundAtmosphere = false;
+viewer.scene.globe.baseColor = Cesium.Color.fromCssColorString("#6b3a28");
+viewer.scene.backgroundColor = Cesium.Color.fromCssColorString("#120c0a");
+
+viewer.camera.setView({ destination: Cesium.Cartesian3.fromDegrees(60, 10, 2.4e7) });
+
+/* ============ 2b. Zoom ============ */
+
+// Limites : on peut s'approcher jusqu'à 2 km du sol et s'éloigner jusqu'à 40 000 km
+const controller = viewer.scene.screenSpaceCameraController;
+controller.minimumZoomDistance = 2000;
+controller.maximumZoomDistance = 4.0e7;
+
+const GLOBAL_VIEW = Cesium.Cartesian3.fromDegrees(60, 10, 2.4e7);
+const cameraHeight = () => viewer.camera.positionCartographic.height;
+
+document.getElementById("zoomIn").addEventListener("click", () => viewer.camera.zoomIn(cameraHeight() * 0.4));
+document.getElementById("zoomOut").addEventListener("click", () => viewer.camera.zoomOut(cameraHeight() * 0.6));
+document.getElementById("zoomReset").addEventListener("click", () => {
+  viewer.camera.flyTo({ destination: GLOBAL_VIEW, duration: 2 });
+});
+
+// Affiche l'altitude de la caméra (utile pour savoir à quelle échelle on regarde)
+const altLabel = document.getElementById("alt");
+viewer.camera.changed.addEventListener(() => {
+  const km = cameraHeight() / 1000;
+  altLabel.textContent = "Altitude : " + (km >= 100 ? Math.round(km).toLocaleString("fr-FR") : km.toFixed(1)) + " km";
+});
+viewer.camera.percentageChanged = 0.05;
+
+/* ============ 3. Couches de données ============ */
+
+const status = document.getElementById("status");
+const layerBox = document.getElementById("layers");
+const imageryLayers = {};
+
+function makeProvider(cfg) {
+  const provider = new Cesium.UrlTemplateImageryProvider({
+    url: `${TREK}/${cfg.name}/1.0.0/default/default028mm/{z}/{y}/{x}.${cfg.ext}`,
+    tilingScheme: new Cesium.GeographicTilingScheme({ ellipsoid: MARS }),
+    maximumLevel: cfg.level,
+    credit: "NASA/JPL – Mars Trek"
+  });
+  provider.errorEvent.addEventListener(() => {
+    status.textContent = "Certaines tuiles ne se chargent pas : vérifie le nom de la couche et le zoom maximum.";
+  });
+  return provider;
+}
+
+LAYERS.forEach(cfg => {
+  const layer = viewer.imageryLayers.addImageryProvider(makeProvider(cfg));
+  layer.show = cfg.on;
+  layer.alpha = cfg.alpha;
+  imageryLayers[cfg.id] = layer;
+
+  const row = document.createElement("div");
+  row.innerHTML = `
+    <label class="layer"><input type="checkbox" ${cfg.on ? "checked" : ""}> ${cfg.label}</label>
+    <input class="opacity" type="range" min="0" max="1" step="0.05" value="${cfg.alpha}" aria-label="Opacité : ${cfg.label}">`;
+  const [check, slider] = [row.querySelector("input[type=checkbox]"), row.querySelector(".opacity")];
+  check.addEventListener("change", () => { layer.show = check.checked; });
+  slider.addEventListener("input", () => { layer.alpha = parseFloat(slider.value); });
+  layerBox.appendChild(row);
+});
+
+/* ============ 4. Zones d'intérêt ============ */
+
+const poiBox = document.getElementById("pois");
+const info = document.getElementById("info");
+
+POIS.forEach(p => {
+  viewer.entities.add({
+    position: Cesium.Cartesian3.fromDegrees(p.lon, p.lat),
+    point: { pixelSize: 10, color: Cesium.Color.fromCssColorString("#7fb3d5"), outlineColor: Cesium.Color.WHITE, outlineWidth: 2 },
+    label: {
+      text: p.name, font: "14px system-ui", fillColor: Cesium.Color.WHITE, outlineColor: Cesium.Color.BLACK, outlineWidth: 3,
+      style: Cesium.LabelStyle.FILL_AND_OUTLINE, pixelOffset: new Cesium.Cartesian2(0, -22),
+      distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 3e7)
+    }
+  });
+
+  const btn = document.createElement("button");
+  btn.className = "poi";
+  btn.textContent = p.name;
+  btn.addEventListener("click", () => {
+    info.textContent = p.note;
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(p.lon, p.lat - 1.5, 450000),
+      orientation: { heading: 0, pitch: Cesium.Math.toRadians(-50), roll: 0 },
+      duration: 3
+    });
+  });
+  poiBox.appendChild(btn);
+});
+</script>
+
+<!-- Module de trajet (fichier séparé, doit rester APRÈS le script ci-dessus) -->
+<script src="config.js"></script>
+<script src="route.js"></script>
+<script src="mission.js"></script>
+<script src="safety.js"></script>
+</body>
+</html>
