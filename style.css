@@ -1,5 +1,5 @@
-/* style.css : composants réutilisables (étiquettes, cartes, textes).
- * Utilise les variables de couleur définies dans index.html (--sand, --muted, --sky, --panel-line). */
+/* style.css: reusable components (badges, cards, text).
+ * Uses the color variables defined in index.html (--sand, --muted, --sky, --panel-line). */
 
 .muted { margin: 4px 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
 .mission-title { margin: 0 0 4px; font-size: 15px; font-weight: 600; }

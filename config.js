@@ -4,8 +4,8 @@
  * `example` to false (or delete it) so the interface stops labeling them. */
 const CONFIG = {
   mission: {
-    title: "Mount Sharp excursion (to be confirmed)",
-    objective: "Study boxwork formations (objective to be confirmed by the team).",
+    title: "Mount Sharp excursion",
+    objective: "Study boxwork formations .",
     story: "Briefing to write: length of the excursion, crew, vehicle, main risks.",
     example: true
   },
