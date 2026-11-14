@@ -6,16 +6,13 @@
  * leur relevé dans Mars Trek. */
 const CONFIG = {
   mission: {
-    title: "Curiosity : montée vers le mont Sharp",
-    objective: "Suivre les cibles géologiques indiquées par la carte de route NASA, des terrains argileux vers les unités porteuses de sulfates.",
-    story: "Mission de reconnaissance scientifique dans le cratère Gale. Mars Trek indique que le mont Sharp contient des dépôts rocheux stratifiés avec argiles, sulfates et sels, des minéraux associés à l'action passée de l'eau.",
-    source: {
-      label: "NASA — Curiosity’s Proposed Path up Mount Sharp",
-      url: "https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/"
-    }
+    title: "Mount Sharp excursion (to be confirmed)",
+    objective: "Study boxwork formations (objective to be confirmed by the team).",
+    story: "Briefing to write: length of the excursion, crew, vehicle, main risks.",
+    example: true
   },
 
-  // Cibles de la carte NASA, dans l'ordre proposé de progression.
+  // Mission stops, in order of travel.
   // level: "ok" | "warning" | "danger"
   // Les coordonnées seront ajoutées après leur vérification dans Mars Trek.
   // Aucune photo n'est renseignée : la galerie fournie concerne Perseverance,
