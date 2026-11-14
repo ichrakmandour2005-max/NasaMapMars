@@ -16,22 +16,18 @@
 
   const M = CONFIG.mission;
   host.append(el("h2", "", "Mission"), el("p", "mission-title", M.title),
-              el("p", "muted", M.objective), el("p", "muted", M.story));
-<<<<<<< HEAD
+              el("p", "muted", M.period), el("p", "muted", M.objective), el("p", "muted", M.story));
   if (M.source) {
     const source = document.createElement("a");
     source.className = "muted";
     source.href = M.source.url;
     source.target = "_blank";
     source.rel = "noopener noreferrer";
-    source.textContent = "Source : " + M.source.label;
+    source.textContent = "Source: " + M.source.label;
     host.append(source);
   }
-=======
-  if (M.example) host.append(el("span", "badge badge-example", "Example content"));
->>>>>>> 1dbb485fca47af1747a79253a325b127ebaee24c
 
-  host.append(el("h2", "", "Stops"));
+  host.append(el("h2", "", "Mission stops"));
   const list = el("div", "steps");
   const detail = el("div", "card");
   detail.hidden = true;
@@ -53,14 +49,10 @@
       img.alt = "Ground view: " + s.name;
       detail.append(img);
     } else {
-<<<<<<< HEAD
-      detail.append(el("p", "muted", "Photo Curiosity non ajoutée : les ressources autorisées ne fournissent pas de galerie Curiosity."));
+      detail.append(el("p", "muted", "Ground photo unavailable: the approved resources do not provide a Curiosity image gallery for this target."));
     }
     if (!Number.isFinite(s.lat) || !Number.isFinite(s.lon)) {
-      detail.append(el("p", "muted", "Coordonnées à relever et vérifier dans NASA Mars Trek avant de charger cette étape sur le globe."));
-=======
-      detail.append(el("p", "muted", "Photo to add (rover images)."));
->>>>>>> 1dbb485fca47af1747a79253a325b127ebaee24c
+      detail.append(el("p", "muted", "Coordinates must be collected and verified in NASA Mars Trek before this stop can be placed on the globe."));
     }
     detail.hidden = false;
   }
@@ -79,7 +71,7 @@
     Number.isFinite(s.lat) && Number.isFinite(s.lon)
   );
   load.disabled = !routeReady;
-  if (!routeReady) load.title = "Les coordonnées des cibles doivent d'abord être vérifiées dans Mars Trek.";
+  if (!routeReady) load.title = "Target coordinates must first be verified in Mars Trek.";
   load.addEventListener("click", () => {
     if (window.MarsRoute) MarsRoute.setWaypoints(CONFIG.steps);
   });

@@ -1,52 +1,55 @@
-/* config.js: contenu scientifique de la mission.
- * Sources autorisées par l'équipe : NASA Mars Trek et la carte NASA
- * « Curiosity's Proposed Path up Mount Sharp ».
- * Les coordonnées précises des cinq cibles ne sont pas fournies par ces
- * ressources sous forme de liste : elles restent volontairement null jusqu'à
- * leur relevé dans Mars Trek. */
+/* config.js: mission content (Person B).
+ * Sources approved by the team: NASA Mars Trek and NASA's
+ * “Curiosity's Proposed Path up Mount Sharp” map.
+ * The five targets have no published coordinate list in those sources, so
+ * coordinates remain null until the team verifies them in Mars Trek. */
 const CONFIG = {
   mission: {
-    title: "Mount Sharp excursion (to be confirmed)",
-    objective: "Study boxwork formations (objective to be confirmed by the team).",
-    story: "Briefing to write: length of the excursion, crew, vehicle, main risks.",
-    example: true
+    title: "Curiosity: Climbing Mount Sharp",
+    period: "Curiosity mission in Gale Crater — proposed route map published May 15, 2019",
+    objective: "Follow the geological targets identified on NASA's route map, from clay-bearing terrain toward sulfate-bearing units.",
+    story: "A science reconnaissance mission in Gale Crater. Mars Trek describes Mount Sharp as layered rock deposits containing clays, sulfates, and salts: sedimentary minerals associated with past water activity.",
+    source: {
+      label: "NASA — Curiosity's Proposed Path up Mount Sharp",
+      url: "https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/"
+    }
   },
 
-  // Mission stops, in order of travel.
+  // NASA map targets, in the proposed order of travel.
   // level: "ok" | "warning" | "danger"
-  // Les coordonnées seront ajoutées après leur vérification dans Mars Trek.
-  // Aucune photo n'est renseignée : la galerie fournie concerne Perseverance,
-  // pas Curiosity, et ne doit donc pas être utilisée ici.
+  // Coordinates will be added after verification in Mars Trek.
+  // No photo is set: the supplied raw-image gallery is Perseverance-only,
+  // so it must not be presented as a Curiosity ground image.
   steps: [
     {
       name: "Clay-Bearing Unit",
       lat: null, lon: null, level: "ok", photo: "",
-      note: "Première cible de la route NASA. L'astronaute y documente des couches riches en argiles et les compare aux reliefs voisins. Les argiles font partie des minéraux sédimentaires associés à l'eau ancienne dans le cratère Gale."
+      note: "First target on the NASA route. The astronaut documents clay-rich layers and compares them with nearby landforms. Clays are among the sedimentary minerals associated with ancient water in Gale Crater."
     },
     {
       name: "Greenheugh Pediment",
       lat: null, lon: null, level: "warning", photo: "",
-      note: "Relief intermédiaire identifié sur la route proposée. L'observation porte sur la transition topographique entre l'unité argileuse et les reliefs de Gediz Vallis."
+      note: "An intermediate landform identified on the proposed route. The observation focuses on the topographic transition between the clay-bearing unit and the Gediz Vallis landforms."
     },
     {
       name: "Gediz Vallis Ridge",
       lat: null, lon: null, level: "warning", photo: "",
-      note: "Crête nommée dans la carte NASA. L'astronaute relève la forme, la continuité et la structure visible de ce relief avant la progression vers le chenal."
+      note: "A ridge named on the NASA map. The astronaut records its shape, continuity, and visible structure before continuing toward the channel."
     },
     {
       name: "Gediz Vallis Channel",
       lat: null, lon: null, level: "warning", photo: "",
-      note: "Chenal indiqué dans la partie haute de l'itinéraire. L'objectif est de documenter sa morphologie et ses relations avec les unités géologiques voisines."
+      note: "A channel shown in the upper section of the route. The goal is to document its morphology and its relationship to nearby geological units."
     },
     {
       name: "Sulfate-Bearing Unit",
       lat: null, lon: null, level: "ok", photo: "",
-      note: "Cible haute de l'itinéraire proposé. L'astronaute étudie les couches porteuses de sulfates, un autre ensemble de minéraux sédimentaires du mont Sharp associé à l'action passée de l'eau."
+      note: "The upper target of the proposed route. The astronaut studies sulfate-bearing layers, another set of Mount Sharp sedimentary minerals associated with past water activity."
     }
   ],
 
   // Areas to avoid.
   // type: "slope" | "rocks" | "radiation"   level: "warning" | "danger"
-  // Only mark a hazard as real (remove `example`) if you can name the data it comes from.
+  // Add a hazard only when its source data can be named.
   hazards: []
 };
