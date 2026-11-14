@@ -1,13 +1,13 @@
-/* route.js – Outil de trajet pour la carte de Mars (niveau 1)
+/* route.js: route tool for the Mars map
  *
- * Fonctions : poser des points au clic, tracer la ligne sur le globe,
- * calculer la distance (sur l’ellipsoïde de Mars) et le temps de marche estimé.
+ * Features: place points by clicking, draw the line on the globe,
+ * compute the distance (on the Mars ellipsoid) and the estimated walking time.
  *
- * Dépend d’index.html : variables globales `viewer` et `MARS` (CesiumJS),
- * et d’un conteneur <div id="route-ui"></div> dans le panneau.
- * Ce fichier doit être chargé APRÈS le script principal.
+ * Depends on index.html: global variables `viewer` and `MARS` (CesiumJS),
+ * and a <div id="route-ui"></div> container in the panel.
+ * This file must be loaded AFTER the main script.
  *
- * API pour le reste du projet (ex. trajets prédéfinis) :
+ * API for the rest of the project (e.g. predefined routes):
  *   MarsRoute.setWaypoints([{ lat: -5.4, lon: 137.8 }, ...])
  *   MarsRoute.getWaypoints()
  *   MarsRoute.clear()
@@ -16,17 +16,17 @@
   "use strict";
 
   if (typeof viewer === "undefined" || typeof MARS === "undefined") {
-    console.error("route.js : charge ce fichier après le script principal d’index.html.");
+    console.error("route.js: load this file after the main script of index.html.");
     return;
   }
   const host = document.getElementById("route-ui");
   if (!host) {
-    console.error("route.js : il manque <div id=\"route-ui\"></div> dans index.html.");
+    console.error("route.js: index.html is missing <div id=\"route-ui\"></div>.");
     return;
   }
 
-  /* ---------- Réglages ---------- */
-  const DEFAULT_SPEED_KMH = 1.5;   // hypothèse modifiable dans l’interface : à ajuster avec les infos de la NASA
+  /* ---------- Settings ---------- */
+  const DEFAULT_SPEED_KMH = 1.5;   // assumption, editable in the interface: adjust with NASA information
   const LINE_COLOR = "#f2b366";
 
   /* ---------- Interface ---------- */
@@ -51,18 +51,18 @@
   document.head.appendChild(style);
 
   host.innerHTML = `
-    <h2>Trajet</h2>
-    <button type="button" id="rt-toggle" class="rt-btn" aria-pressed="false">Tracer un trajet</button>
-    <label class="rt-speed">Vitesse de marche (km/h)
+    <h2>Route</h2>
+    <button type="button" id="rt-toggle" class="rt-btn" aria-pressed="false">Draw a route</button>
+    <label class="rt-speed">Walking speed (km/h)
       <input id="rt-speed" type="number" min="0.1" step="0.1" value="${DEFAULT_SPEED_KMH}">
     </label>
     <div id="rt-summary" aria-live="polite"></div>
     <ol id="rt-steps"></ol>
     <div class="rt-row">
-      <button type="button" id="rt-undo" class="rt-btn">Annuler le dernier point</button>
-      <button type="button" id="rt-clear" class="rt-btn">Effacer</button>
+      <button type="button" id="rt-undo" class="rt-btn">Undo last point</button>
+      <button type="button" id="rt-clear" class="rt-btn">Clear</button>
     </div>
-    <button type="button" id="rt-copy" class="rt-btn">Copier le trajet (GeoJSON)</button>
+    <button type="button" id="rt-copy" class="rt-btn">Copy route (GeoJSON)</button>
     <div id="rt-msg"></div>
   `;
 
@@ -70,9 +70,9 @@
   const toggleBtn = $("rt-toggle"), speedInput = $("rt-speed"), summary = $("rt-summary"), stepsList = $("rt-steps");
   const undoBtn = $("rt-undo"), clearBtn = $("rt-clear"), copyBtn = $("rt-copy"), msg = $("rt-msg");
 
-  /* ---------- État et objets Cesium ---------- */
-  const positions = [];        // Cartesian3 des points du trajet
-  const pointEntities = [];    // un repère numéroté par point
+  /* ---------- State and Cesium objects ---------- */
+  const positions = [];        // Cartesian3 of the route points
+  const pointEntities = [];    // one numbered marker per point
 
   viewer.entities.add({
     polyline: {
@@ -83,7 +83,7 @@
     }
   });
 
-  /* ---------- Calculs ---------- */
+  /* ---------- Calculations ---------- */
   function toCarto(cartesian) {
     return Cesium.Cartographic.fromCartesian(cartesian, MARS);
   }
@@ -97,7 +97,7 @@
   function formatDistance(meters) {
     return meters < 1000
       ? Math.round(meters) + " m"
-      : (meters / 1000).toFixed(2).replace(".", ",") + " km";
+      : (meters / 1000).toFixed(2) + " km";
   }
 
   function formatDuration(hours) {
@@ -111,7 +111,7 @@
     return v > 0 ? v : DEFAULT_SPEED_KMH;
   }
 
-  /* ---------- Mise à jour de l’affichage ---------- */
+  /* ---------- Display update ---------- */
   function refresh() {
     stepsList.innerHTML = "";
     let total = 0;
@@ -120,25 +120,25 @@
       const d = segmentDistance(positions[i - 1], positions[i]);
       total += d;
       const li = document.createElement("li");
-      li.textContent = "Point " + i + " → " + (i + 1) + " : " + formatDistance(d);
+      li.textContent = "Point " + i + " → " + (i + 1) + ": " + formatDistance(d);
       stepsList.appendChild(li);
     }
 
     if (positions.length === 0) {
-      summary.textContent = "Aucun point. Active le tracé puis clique sur le globe.";
+      summary.textContent = "No points yet. Turn on drawing, then click on the globe.";
     } else if (positions.length === 1) {
-      summary.textContent = "1 point posé. Ajoute-en un deuxième pour obtenir un trajet.";
+      summary.textContent = "1 point placed. Add a second one to get a route.";
     } else {
       const hours = total / 1000 / speedKmh();
-      summary.innerHTML = "Distance : <strong>" + formatDistance(total) + "</strong><br>" +
-                          "Durée à pied : <strong>" + formatDuration(hours) + "</strong>";
+      summary.innerHTML = "Distance: <strong>" + formatDistance(total) + "</strong><br>" +
+                          "Walking time: <strong>" + formatDuration(hours) + "</strong>";
     }
 
     undoBtn.disabled = positions.length === 0;
     clearBtn.disabled = positions.length === 0;
     copyBtn.disabled = positions.length < 2;
 
-    // Prévient les autres modules (ex. safety.js) que le trajet a changé
+    // Tells the other modules (e.g. safety.js) that the route changed
     window.dispatchEvent(new Event("marsroute:change"));
   }
 
@@ -170,16 +170,16 @@
     refresh();
   }
 
-  /* ---------- Mode tracé (clic gauche) ---------- */
+  /* ---------- Drawing mode (left click) ---------- */
   const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
   let drawing = false;
 
   function setDrawing(on) {
     drawing = on;
     toggleBtn.setAttribute("aria-pressed", String(on));
-    toggleBtn.textContent = on ? "Terminer le tracé" : "Tracer un trajet";
+    toggleBtn.textContent = on ? "Finish drawing" : "Draw a route";
     viewer.scene.canvas.style.cursor = on ? "crosshair" : "";
-    msg.textContent = on ? "Clique sur le globe pour poser chaque point du trajet." : "";
+    msg.textContent = on ? "Click on the globe to place each point of the route." : "";
 
     if (on) {
       handler.setInputAction(click => {
@@ -207,18 +207,18 @@
   copyBtn.addEventListener("click", async () => {
     const geojson = {
       type: "Feature",
-      properties: { name: "Trajet Mars", speedKmh: speedKmh() },
+      properties: { name: "Mars route", speedKmh: speedKmh() },
       geometry: { type: "LineString", coordinates: toWaypointList().map(w => [w.lon, w.lat]) }
     };
     try {
       await navigator.clipboard.writeText(JSON.stringify(geojson, null, 2));
-      msg.textContent = "Trajet copié. Colle-le dans un fichier .geojson.";
+      msg.textContent = "Route copied. Paste it into a .geojson file.";
     } catch (e) {
-      msg.textContent = "Copie impossible depuis cette page : ouvre-la avec Live Server (localhost).";
+      msg.textContent = "Copy not possible from this page: open it with Live Server (localhost).";
     }
   });
 
-  /* ---------- API publique ---------- */
+  /* ---------- Public API ---------- */
   window.MarsRoute = {
     getWaypoints: toWaypointList,
     setWaypoints(list) {
