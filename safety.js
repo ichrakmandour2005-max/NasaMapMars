@@ -1,13 +1,13 @@
-/* safety.js : zones à risque (config.js) affichées sur le globe + analyse du trajet tracé.
- * Dépend de : viewer, MARS (index.html), CONFIG (config.js), MarsRoute (route.js). */
+/* safety.js: hazard zones (config.js) shown on the globe + analysis of the drawn route.
+ * Depends on: viewer, MARS (index.html), CONFIG (config.js), MarsRoute (route.js). */
 (function () {
   "use strict";
   const host = document.getElementById("safety-ui");
   if (!host || typeof CONFIG === "undefined" || typeof viewer === "undefined") return;
 
   const COLORS = { warning: "#e0b04a", danger: "#e0705a" };
-  const LEVELS = { ok: "Sûr", warning: "Attention", danger: "Danger" };
-  const TYPES = { slope: "pente forte", rocks: "zone rocheuse", radiation: "radiation / météo spatiale" };
+  const LEVELS = { ok: "Safe", warning: "Caution", danger: "Danger" };
+  const TYPES = { slope: "steep slope", rocks: "rocky area", radiation: "radiation / space weather" };
   const SAMPLES_PER_SEGMENT = 20;
 
   const el = (tag, cls, text) => {
@@ -17,7 +17,7 @@
     return e;
   };
 
-  /* ---------- Zones sur le globe ---------- */
+  /* ---------- Zones on the globe ---------- */
   const zones = CONFIG.hazards.map(h => {
     const color = Cesium.Color.fromCssColorString(COLORS[h.level]);
     return viewer.entities.add({
@@ -29,7 +29,7 @@
     });
   });
 
-  /* ---------- Calculs ---------- */
+  /* ---------- Calculations ---------- */
   const carto = p => Cesium.Cartographic.fromDegrees(p.lon, p.lat);
   const same = (a, b) => a.longitude === b.longitude && a.latitude === b.latitude;
 
@@ -40,7 +40,7 @@
     return Number.isFinite(d) ? d : 0;
   }
 
-  // Points régulièrement répartis le long du trajet
+  // Evenly spaced points along the route
   function samples(wps) {
     const out = wps.length ? [wps[0]] : [];
     for (let i = 1; i < wps.length; i++) {
@@ -56,15 +56,15 @@
   }
 
   /* ---------- Interface ---------- */
-  host.append(el("h2", "", "Sécurité"));
-  host.append(el("p", "muted", "Les zones à risque actuelles sont des exemples, à remplacer par des données réelles."));
+  host.append(el("h2", "", "Safety"));
+  host.append(el("p", "muted", "The current hazard zones are examples, to be replaced with real data."));
 
   const toggle = el("label", "layer");
   const check = el("input");
   check.type = "checkbox";
   check.checked = true;
   check.addEventListener("change", () => zones.forEach(z => { z.show = check.checked; }));
-  toggle.append(check, " Afficher les zones à risque");
+  toggle.append(check, " Show hazard zones");
 
   const result = el("div", "card");
   host.append(toggle, result);
@@ -73,7 +73,7 @@
     const wps = window.MarsRoute ? MarsRoute.getWaypoints() : [];
     result.replaceChildren();
     if (wps.length < 2) {
-      result.append(el("p", "muted", "Trace un trajet pour l’analyser."));
+      result.append(el("p", "muted", "Draw a route to analyze it."));
       return;
     }
     const pts = samples(wps);
@@ -82,9 +82,9 @@
 
     result.append(el("span", "badge badge-" + level, LEVELS[level]));
     if (!hit.length) {
-      result.append(el("p", "muted", "Le trajet ne traverse aucune zone à risque connue."));
+      result.append(el("p", "muted", "The route does not cross any known hazard zone."));
     } else {
-      result.append(el("p", "muted", "Le trajet traverse " + hit.length + " zone(s) :"));
+      result.append(el("p", "muted", "The route crosses " + hit.length + " zone(s):"));
       const ul = el("ul", "muted");
       hit.forEach(h => ul.append(el("li", "", h.label + " : " + (TYPES[h.type] || h.type))));
       result.append(ul);

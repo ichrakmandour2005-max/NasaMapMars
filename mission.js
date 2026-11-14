@@ -1,11 +1,11 @@
-/* mission.js : briefing de mission et étapes (contenu dans config.js).
- * Dépend de : viewer, MARS (index.html), CONFIG (config.js), MarsRoute (route.js, optionnel). */
+/* mission.js: mission briefing and stops (content lives in config.js).
+ * Depends on: viewer, MARS (index.html), CONFIG (config.js), MarsRoute (route.js, optional). */
 (function () {
   "use strict";
   const host = document.getElementById("mission-ui");
   if (!host || typeof CONFIG === "undefined" || typeof viewer === "undefined") return;
 
-  const LEVELS = { ok: "Sûr", warning: "Attention", danger: "Danger" };
+  const LEVELS = { ok: "Safe", warning: "Caution", danger: "Danger" };
   const el = (tag, cls, text) => {
     const e = document.createElement(tag);
     if (cls) e.className = cls;
@@ -17,6 +17,7 @@
   const M = CONFIG.mission;
   host.append(el("h2", "", "Mission"), el("p", "mission-title", M.title),
               el("p", "muted", M.objective), el("p", "muted", M.story));
+<<<<<<< HEAD
   if (M.source) {
     const source = document.createElement("a");
     source.className = "muted";
@@ -26,8 +27,11 @@
     source.textContent = "Source : " + M.source.label;
     host.append(source);
   }
+=======
+  if (M.example) host.append(el("span", "badge badge-example", "Example content"));
+>>>>>>> 1dbb485fca47af1747a79253a325b127ebaee24c
 
-  host.append(el("h2", "", "Étapes"));
+  host.append(el("h2", "", "Stops"));
   const list = el("div", "steps");
   const detail = el("div", "card");
   detail.hidden = true;
@@ -46,13 +50,17 @@
     if (s.photo) {
       const img = el("img", "step-photo");
       img.src = s.photo;
-      img.alt = "Vue au sol : " + s.name;
+      img.alt = "Ground view: " + s.name;
       detail.append(img);
     } else {
+<<<<<<< HEAD
       detail.append(el("p", "muted", "Photo Curiosity non ajoutée : les ressources autorisées ne fournissent pas de galerie Curiosity."));
     }
     if (!Number.isFinite(s.lat) || !Number.isFinite(s.lon)) {
       detail.append(el("p", "muted", "Coordonnées à relever et vérifier dans NASA Mars Trek avant de charger cette étape sur le globe."));
+=======
+      detail.append(el("p", "muted", "Photo to add (rover images)."));
+>>>>>>> 1dbb485fca47af1747a79253a325b127ebaee24c
     }
     detail.hidden = false;
   }
@@ -65,7 +73,7 @@
     list.append(b);
   });
 
-  const load = el("button", "poi", "Charger ces étapes comme trajet");
+  const load = el("button", "poi", "Load these stops as a route");
   load.type = "button";
   const routeReady = CONFIG.steps.length >= 2 && CONFIG.steps.every(s =>
     Number.isFinite(s.lat) && Number.isFinite(s.lon)
