@@ -1,25 +1,29 @@
-/* config.js : tout le contenu de la mission, au même endroit.
- * À modifier demain avec l’équipe. Les éléments marqués `example: true`
- * sont des EXEMPLES de structure, pas des données réelles : à remplacer. */
+/* config.js: all mission content in one place.
+ * Edit this file with your team. Entries marked `example: true` are
+ * PLACEHOLDERS showing the structure, not real data: replace them, then set
+ * `example` to false (or delete it) so the interface stops labeling them. */
 const CONFIG = {
   mission: {
-    title: "Sortie au mont Sharp (à confirmer)",
-    objective: "Étudier les formations « boxwork » (objectif à confirmer par l’équipe).",
-    story: "Briefing à écrire : durée de la sortie, équipage, véhicule, risques principaux.",
+    title: "Mount Sharp excursion (to be confirmed)",
+    objective: "Study boxwork formations (objective to be confirmed by the team).",
+    story: "Briefing to write: length of the excursion, crew, vehicle, main risks.",
     example: true
   },
 
-  // Étapes du trajet de la mission. level : "ok" | "warning" | "danger"
-  // photo : adresse d’une image prise par un rover (optionnel)
+  // Mission stops, in order of travel.
+  // level: "ok" | "warning" | "danger"
+  // photo: path or URL of a ground image (optional), e.g. "images/stop1.jpg"
   steps: [
-    { name: "Départ : habitat (exemple)",   lat: -4.95, lon: 137.40, level: "ok",      note: "Point de départ. Vérification des combinaisons.", photo: "" },
-    { name: "Étape 1 (exemple)",            lat: -5.05, lon: 137.45, level: "warning", note: "Terrain à décrire d’après les données réelles.",  photo: "" },
-    { name: "Objectif scientifique (exemple)", lat: -5.15, lon: 137.50, level: "ok",   note: "Zone d’étude : à décrire.",                       photo: "" }
+    { name: "Start: habitat (example)",        lat: -4.95, lon: 137.40, level: "ok",      note: "Starting point. Suit and equipment checks.",          photo: "" },
+    { name: "Stop 1 (example)",                lat: -5.05, lon: 137.45, level: "warning", note: "Describe the terrain using real data.",               photo: "" },
+    { name: "Science target (example)",        lat: -5.15, lon: 137.50, level: "ok",      note: "Study area: to be described.",                        photo: "" }
   ],
 
-  // Zones à éviter. type : "slope" | "rocks" | "radiation". level : "warning" | "danger"
+  // Areas to avoid.
+  // type: "slope" | "rocks" | "radiation"   level: "warning" | "danger"
+  // Only mark a hazard as real (remove `example`) if you can name the data it comes from.
   hazards: [
-    { id: "h1", type: "slope", label: "Pente forte (exemple)",    lat: -5.02, lon: 137.42, radiusKm: 6, level: "warning", example: true },
-    { id: "h2", type: "rocks", label: "Zone rocheuse (exemple)",  lat: -5.35, lon: 137.70, radiusKm: 8, level: "danger",  example: true }
+    { id: "h1", type: "slope", label: "Steep slope (example)",  lat: -5.02, lon: 137.42, radiusKm: 6, level: "warning", example: true },
+    { id: "h2", type: "rocks", label: "Rocky area (example)",   lat: -5.35, lon: 137.70, radiusKm: 8, level: "danger",  example: true }
   ]
 };
