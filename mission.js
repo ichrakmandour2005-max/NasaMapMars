@@ -48,6 +48,16 @@
       img.src = s.photo;
       img.alt = "Ground view: " + s.name;
       detail.append(img);
+      if (s.photoCaption) detail.append(el("p", "muted", s.photoCaption));
+      if (s.photoSource) {
+        const photoSource = document.createElement("a");
+        photoSource.className = "muted";
+        photoSource.href = s.photoSource;
+        photoSource.target = "_blank";
+        photoSource.rel = "noopener noreferrer";
+        photoSource.textContent = "Photo source: NASA/JPL-Caltech/MSSS";
+        detail.append(photoSource);
+      }
     } else {
       detail.append(el("p", "muted", "Ground photo unavailable: the approved resources do not provide a Curiosity image gallery for this target."));
     }
