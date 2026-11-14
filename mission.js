@@ -17,7 +17,15 @@
   const M = CONFIG.mission;
   host.append(el("h2", "", "Mission"), el("p", "mission-title", M.title),
               el("p", "muted", M.objective), el("p", "muted", M.story));
-  if (M.example) host.append(el("span", "badge badge-example", "Contenu d’exemple"));
+  if (M.source) {
+    const source = document.createElement("a");
+    source.className = "muted";
+    source.href = M.source.url;
+    source.target = "_blank";
+    source.rel = "noopener noreferrer";
+    source.textContent = "Source : " + M.source.label;
+    host.append(source);
+  }
 
   host.append(el("h2", "", "Étapes"));
   const list = el("div", "steps");
@@ -25,6 +33,7 @@
   detail.hidden = true;
 
   function flyTo(s) {
+    if (!Number.isFinite(s.lat) || !Number.isFinite(s.lon)) return;
     viewer.camera.flyTo({
       destination: Cesium.Cartesian3.fromDegrees(s.lon, s.lat - 1.5, 450000, MARS),
       orientation: { heading: 0, pitch: Cesium.Math.toRadians(-50), roll: 0 },
@@ -40,7 +49,10 @@
       img.alt = "Vue au sol : " + s.name;
       detail.append(img);
     } else {
-      detail.append(el("p", "muted", "Photo à ajouter (images des rovers)."));
+      detail.append(el("p", "muted", "Photo Curiosity non ajoutée : les ressources autorisées ne fournissent pas de galerie Curiosity."));
+    }
+    if (!Number.isFinite(s.lat) || !Number.isFinite(s.lon)) {
+      detail.append(el("p", "muted", "Coordonnées à relever et vérifier dans NASA Mars Trek avant de charger cette étape sur le globe."));
     }
     detail.hidden = false;
   }
@@ -55,6 +67,11 @@
 
   const load = el("button", "poi", "Charger ces étapes comme trajet");
   load.type = "button";
+  const routeReady = CONFIG.steps.length >= 2 && CONFIG.steps.every(s =>
+    Number.isFinite(s.lat) && Number.isFinite(s.lon)
+  );
+  load.disabled = !routeReady;
+  if (!routeReady) load.title = "Les coordonnées des cibles doivent d'abord être vérifiées dans Mars Trek.";
   load.addEventListener("click", () => {
     if (window.MarsRoute) MarsRoute.setWaypoints(CONFIG.steps);
   });
