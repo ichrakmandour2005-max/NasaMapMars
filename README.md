@@ -9,6 +9,11 @@ The interface is designed as a mission console: a briefing screen presents the m
 - **Mandour Ichrak**
 - **Ichi Mina**
 
+## Presentation
+
+- [novaMIY presentation (PowerPoint)](.codex-ppt-output/novaMIY_mars_eva_console_updated.pptx)
+- [novaMIY presentation (PDF)](.codex-ppt-output/novaMIY_mars_eva_console_updated.pdf)
+
 ## Features
 
 ### Mission briefing
