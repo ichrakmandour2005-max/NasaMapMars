@@ -1,8 +1,7 @@
 /* config.js: mission content (Person B).
  * Sources approved by the team: NASA Mars Trek and NASA's
  * “Curiosity's Proposed Path up Mount Sharp” map.
- * The five targets have no published coordinate list in those sources, so
- * coordinates remain null until the team verifies them in Mars Trek. */
+ * Coordinates are left blank until verified against Mars Trek. */
 const CONFIG = {
   mission: {
     title: "Curiosity: Climbing Mount Sharp",
@@ -18,7 +17,7 @@ const CONFIG = {
   // NASA map targets, in the proposed order of travel.
   // level: "ok" | "warning" | "danger" | "unknown"
   //   Use "unknown" (shown as "Not assessed") unless the reason for the level can be written in `note`.
-  // Coordinates will be added after verification in Mars Trek.
+  // Add coordinates only after verifying each stop in Mars Trek.
   // Each photo below is an official Curiosity image from NASA Photojournal.
   // photoCredit: verify the credit line on each Photojournal page.
   steps: [
