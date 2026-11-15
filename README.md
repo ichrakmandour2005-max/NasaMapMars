@@ -48,17 +48,9 @@ The five mission stops are:
 
 Each stop includes a description, a Curiosity ground image, a NASA source and a visual caution level. The coordinates in `config.js` are **representative map waypoints** selected from the NASA annotated route map and Mars Trek layers. They are not official GPS coordinates for the complete geological units.
 
-The **Load these stops as a route** button loads the five waypoints into the route tool.
+### Mission itinerary
 
-### Route tool
-
-- Place route points manually on the globe
-- Load the five mission waypoints
-- Calculate distance on the Mars ellipsoid
-- Estimate walking time using an editable speed, set to 1.5 km/h by default
-- Undo the last point
-- Clear the route
-- Copy the route as GeoJSON
+The five mission stops define the scientific traverse. Because exact coordinates are not available for every geological target, the astronaut sets each waypoint directly on the globe. Selecting **Show full itinerary** displays the complete path and the safe places along it.
 
 ## Displayed data
 
@@ -92,7 +84,6 @@ The mission follows the geological transition described in NASA resources: clay-
 - Vanilla JavaScript
 - CesiumJS for the 3D globe and map entities
 - NASA/JPL Mars Trek WMTS tiles for Mars imagery
-- GeoJSON for route export
 - `localStorage` for checklist persistence
 - Google Fonts / Fontshare typography:
   - Clash Display for headings
@@ -118,7 +109,7 @@ The project does not use React, Vite or a bundler. It is a static HTML/CSS/JavaS
 | `app.js` | Cesium initialization, globe, layers and points of interest |
 | `config.js` | Mission, stops, descriptions, photos, waypoints and sources |
 | `mission.js` | Mission panel, stop details and route loading |
-| `route.js` | Manual route, distance, duration and GeoJSON export |
+| `route.js` | Itinerary distance and duration calculations |
 | `safety.js` | Safety analysis based on configured hazard data |
 | `map-interactions.js` | Regional view, point hover and collapsible sidebar |
 | `map-region.js` | Initial focus on Gale Crater / Mount Sharp |
@@ -147,7 +138,7 @@ An internet connection is required for CesiumJS, Mars Trek tiles and remote font
 - The sidebar toggle collapses and expands the side panel.
 - The globe uses the space released by the collapsed sidebar.
 - Hovering over a point of interest shows its information tooltip.
-- **Load these stops as a route** places the five mission points.
+- **Show full itinerary** displays the five astronaut-defined waypoints, the complete path and safe places.
 
 ## Responsive testing
 
@@ -186,7 +177,7 @@ NASA does not endorse non-U.S. Government entities and is not responsible for in
 - Weather and radiation values are historical, not real-time.
 - Environmental values are not recalculated automatically for every route point.
 - The five stop positions are representative map waypoints, not an official NASA coordinate table for each geological unit.
-- The route tool does not yet automatically avoid steep slopes, rocks or radiation zones.
+- The itinerary does not yet automatically avoid steep slopes, rocks or radiation zones.
 - Relief is presented through imagery and MOLA shading; Cesium terrain remains visually smooth.
 - The default walking speed of 1.5 km/h is an adjustable assumption, not an operational NASA value.
 - Remote tiles and fonts require an internet connection.
@@ -201,7 +192,7 @@ NASA does not endorse non-U.S. Government entities and is not responsible for in
 - [x] Historical radiation and weather indicators
 - [x] Responsive collapsible sidebar
 - [x] Hover information for points of interest
-- [x] Route tool and GeoJSON export
+- [x] Mission stops and full itinerary display
 - [ ] Automatic hazard-avoiding route calculation
 - [ ] Final testing on multiple computers
 - [ ] Demo video
