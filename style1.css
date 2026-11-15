@@ -1,0 +1,23 @@
+/* style.css: reusable components (badges, cards, text).
+ * Uses the color variables defined in index.html (--sand, --muted, --sky, --panel-line). */
+
+.muted { margin: 4px 0 8px; font-size: 13px; line-height: 1.45; color: var(--muted); }
+.mission-title { margin: 0 0 4px; font-size: 15px; font-weight: 600; }
+
+.badge {
+  display: inline-block; margin-left: 4px; padding: 2px 8px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; line-height: 1.5; color: #201510; vertical-align: middle;
+}
+.badge-ok      { background: #7fc29b; }
+.badge-warning { background: #e6b85c; }
+.badge-danger  { background: #e8806a; }
+.badge-example { margin-left: 0; background: transparent; color: var(--muted); border: 1px dashed var(--panel-line); }
+
+.card { margin: 8px 0; padding: 10px 12px; border: 1px solid var(--panel-line); border-radius: 8px; font-size: 14px; }
+.card ul { margin: 6px 0 0; padding-left: 18px; }
+.card .badge { margin-left: 8px; }
+.step-photo { display: block; width: 100%; margin-top: 8px; border-radius: 6px; }
+
+#panel .steps button.poi .badge { float: right; }
+
+.badge-unknown { background: transparent; color: var(--muted); border: 1px dashed var(--panel-line); }
