@@ -1,0 +1,1 @@
+#map-screen #map{left:344px!important;right:0!important;width:auto!important;transition:left .22s ease}#map-screen.sidebar-collapsed #map{left:76px!important}#map-screen #panel{z-index:8}@media(max-width:760px){#map-screen #map{left:326px!important}#map-screen.sidebar-collapsed #map{left:64px!important}}

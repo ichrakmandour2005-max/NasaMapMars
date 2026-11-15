@@ -82,9 +82,21 @@
   );
   load.disabled = !routeReady;
   if (!routeReady) load.title = "Target coordinates must first be verified in Mars Trek.";
+  const loadMessage = el("p", "muted", "");
+  loadMessage.setAttribute("aria-live", "polite");
   load.addEventListener("click", () => {
-    if (window.MarsRoute) MarsRoute.setWaypoints(CONFIG.steps);
+    if (!window.MarsRoute) {
+      loadMessage.textContent = "Route tool is not ready. Reload the page with Live Server.";
+      return;
+    }
+    MarsRoute.setWaypoints(CONFIG.steps);
+    const center = CONFIG.steps[Math.floor(CONFIG.steps.length / 2)];
+    viewer.camera.flyTo({
+      destination: Cesium.Cartesian3.fromDegrees(center.lon, center.lat - 1.5, 450000, MARS),
+      duration: 2
+    });
+    loadMessage.textContent = "Five NASA map waypoints loaded. Adjust the route in the Route panel below.";
   });
 
-  host.append(list, detail, load);
+  host.append(list, detail, load, loadMessage);
 })();
