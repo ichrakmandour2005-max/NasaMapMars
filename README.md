@@ -5,9 +5,7 @@ Responsive web interface for planning a science traverse on Mars in the Gale Cra
 The interface is designed as a mission console: a briefing screen presents the mission objective and environmental conditions, then the astronaut opens a 3D Mars map to explore data layers, points of interest and the route.
 
 ## Team
-
-- **Mandour Ichrak**
-- **Ichi Mina**
+novaMIY
 
 ## Presentation
 
