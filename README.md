@@ -1,86 +1,206 @@
-# Mars 3D : planificateur de sortie pour astronaute
+# Mars EVA Field Console
 
-Projet réalisé pour le **NASA International Space Apps Challenge**, défi : créer une carte, un outil ou une interface qu'un astronaute pourrait utiliser pendant une exploration de la surface de Mars, à partir de données et d'outils NASA.
+Responsive web interface for planning a science traverse on Mars in the Gale Crater and Mount Sharp region, using NASA data and resources.
 
-> Statut : prototype en cours de développement.
+The interface is designed as a mission console: a briefing screen presents the mission objective and environmental conditions, then the astronaut opens a 3D Mars map to explore data layers, points of interest and the route.
 
-## Objectif
+## Team
 
-Donner à un astronaute une vue 3D de Mars où il peut superposer plusieurs types de données NASA, repérer sa zone d'exploration et préparer un trajet à pied.
+- **Mandour Ichrak**
+- **Ichi Mina**
 
-- **Utilisateur visé** : un astronaute qui prépare une sortie sur la surface de Mars
-- **Lieu et objectif scientifique** : _à compléter (par exemple : étudier les formations « boxwork » au mont Sharp)_
+## Features
 
-## Fonctionnalités actuelles
+### Mission briefing
 
-- Globe 3D de Mars (CesiumJS) avec les dimensions réelles de la planète
-- Quatre couches de données NASA activables, avec réglage de l'opacité :
-  - imagerie couleur (Viking)
-  - imagerie haute résolution de Gale (CTX)
-  - relief coloré (MOLA)
-  - températures infrarouges (THEMIS)
-- Zoom (molette, boutons + et −, retour à la vue globale) et affichage de l'altitude de la caméra
-- Quatre zones d'intérêt avec vol de caméra : mont Sharp (cratère Gale), cratère Jezero, Olympus Mons, Valles Marineris
-- Outil de trajet : poser des points sur le globe, tracer la ligne, calculer la distance et la durée de marche estimée, exporter en GeoJSON
-- Cartes environnementales sourcées : plage de dose de surface publiée par NASA/RAD et lien direct vers l'archive météo REMS (les observations météo restent historiques et sol-spécifiques, sans fausse prévision)
+- Mission: **Curiosity mission in Gale Crater**
+- Objective: follow the geological targets from clay-bearing terrain toward sulfate-bearing units
+- Scientific context for Mount Sharp and evidence of past water activity
+- Interactive EVA checklist; checked items are saved in the browser
+- Environmental indicators for radiation, historical weather, relief and geology
+- Dark, readable and responsive interface for desktop, tablet and phone
 
-## Lancer le projet
+### 3D Mars map
 
-Le projet est une application statique en **HTML, CSS et JavaScript**. Ouvrez
-`index.html` avec l'extension **Live Server** de Visual Studio Code.
+- Mars 3D globe centered on Gale Crater / Mount Sharp when the map opens
+- Four switchable and opacity-adjustable Mars Trek layers:
+  - Color imagery (Viking)
+  - Gale high-res imagery (CTX)
+  - Colored relief (MOLA)
+  - Thermal infrared (THEMIS)
+- Points of interest: Gale Crater / Mount Sharp, Jezero Crater, Olympus Mons and Valles Marineris
+- Information tooltip when hovering over a point of interest
+- Side panel that can be collapsed on desktop, tablet and phone
+- Zoom controls, regional view, global view and camera altitude display
 
-Une connexion internet est nécessaire : CesiumJS et les tuiles de Mars Trek sont chargés en ligne.
+### Curiosity mission stops
 
-## Structure du projet
+The five mission stops are:
 
-| Fichier | Rôle |
+1. Clay-Bearing Unit
+2. Greenheugh Pediment
+3. Gediz Vallis Ridge
+4. Gediz Vallis Channel
+5. Mg-Sulfate Bearing Unit
+
+Each stop includes a description, a Curiosity ground image, a NASA source and a visual caution level. The coordinates in `config.js` are **representative map waypoints** selected from the NASA annotated route map and Mars Trek layers. They are not official GPS coordinates for the complete geological units.
+
+The **Load these stops as a route** button loads the five waypoints into the route tool.
+
+### Route tool
+
+- Place route points manually on the globe
+- Load the five mission waypoints
+- Calculate distance on the Mars ellipsoid
+- Estimate walking time using an editable speed, set to 1.5 km/h by default
+- Undo the last point
+- Clear the route
+- Copy the route as GeoJSON
+
+## Displayed data
+
+### Radiation
+
+The briefing displays the MSL/RAD surface dose-rate range published in a NASA radiation briefing: **0.21–0.25 mGy/day**.
+
+This is a historical mission range, not a live measurement and not an automatically calculated radiation-danger map for the route.
+
+### Weather
+
+The briefing displays a historical REMS profile: **−48 to −77 °C** for the REMS Sol 1063 temperature profile, with surface pressure around **800 Pa** in the NASA references used by the project.
+
+These values are not a current forecast. REMS measures air and ground temperature, pressure, humidity, wind and ultraviolet radiation at the rover.
+
+### Relief and geology
+
+The map uses these layers:
+
+- **Viking**: global color imagery
+- **CTX**: high-resolution Gale Crater imagery
+- **MOLA**: colored relief from laser altimetry
+- **THEMIS**: thermal infrared imagery
+
+The mission follows the geological transition described in NASA resources: clay-bearing terrain, Greenheugh Pediment, Gediz Vallis and sulfate-bearing units.
+
+## Technologies
+
+- HTML5
+- CSS3 responsive media queries
+- Vanilla JavaScript
+- CesiumJS for the 3D globe and map entities
+- NASA/JPL Mars Trek WMTS tiles for Mars imagery
+- GeoJSON for route export
+- `localStorage` for checklist persistence
+- Google Fonts / Fontshare typography:
+  - Clash Display for headings
+  - Schibsted Grotesk for subheadings
+  - Outfit for body text
+
+The project does not use React, Vite or a bundler. It is a static HTML/CSS/JavaScript application.
+
+## Main project structure
+
+| File | Purpose |
 |---|---|
-| `index.html` | Écran de briefing et carte Mars |
-| `style.css` | Interface responsive (mobile, tablette, bureau) |
-| `app.js` | Contrôles de l'application, globe Cesium, couches et points d'intérêt |
-| `environment.js` / `environment-ui.js` | Métadonnées NASA de radiation et météo et rendu des cartes du briefing |
-| `config.js` | Données JavaScript de la mission, arrêts et sources NASA |
-| `README.md` | Ce document |
+| `index.html` | Briefing screen, map screen and script loading |
+| `style.css` | Base map and sidebar styles |
+| `briefing.css` | Home-screen layout |
+| `briefing-final.css` | Dark spatial design without rounded cards |
+| `briefing-type-system.css` | Home-screen font system |
+| `briefing-copy.js` | Mission text displayed on the briefing screen |
+| `environment.js` | NASA environmental values and references |
+| `environment-ui.js` | Checklist and environment-card rendering |
+| `environment-cards.js` | Relief and geology card data |
+| `status-cleanup.js` | Removes source links from the small briefing cards |
+| `app.js` | Cesium initialization, globe, layers and points of interest |
+| `config.js` | Mission, stops, descriptions, photos, waypoints and sources |
+| `mission.js` | Mission panel, stop details and route loading |
+| `route.js` | Manual route, distance, duration and GeoJSON export |
+| `safety.js` | Safety analysis based on configured hazard data |
+| `map-interactions.js` | Regional view, point hover and collapsible sidebar |
+| `map-region.js` | Initial focus on Gale Crater / Mount Sharp |
+| `map-sidebar.css` | Collapsible side panel |
+| `map-layout.css` | Space reserved between map and sidebar |
+| `map-responsive.css` | Responsive map behavior |
 
-## Sources de données
+Files ending in `1` are old working copies and are not required for the main launch.
 
-Toutes les couches viennent de **NASA/JPL Mars Trek** (service de tuiles WMTS, trek.nasa.gov) :
+## Run locally
 
-| Couche | Origine |
-|---|---|
-| Imagerie couleur | Mosaïque globale Viking, 232 m/pixel |
-| Relief coloré | Altimètre laser MOLA (Mars Global Surveyor) |
-| Thermique | THEMIS, jour, infrarouge, 100 m/pixel (couverture entre 65° S et 65° N) |
+### Recommended: VS Code Live Server
 
-Les photos des étapes Curiosity utilisent également les pages officielles NASA Science Photojournal indiquées dans `config.js`.
+1. Open the project folder in Visual Studio Code.
+2. Install the **Live Server** extension.
+3. Right-click `index.html`.
+4. Select **Open with Live Server**.
 
-Les cartes environnementales utilisent le résumé NASA du rayonnement mesuré par MSL/RAD (0,21–0,25 mGy/jour en surface) et l'archive NASA PDS des mesures REMS. Ces informations ne sont pas une télémétrie temps réel et ne représentent pas automatiquement chaque arrêt de l'itinéraire.
+An internet connection is required for CesiumJS, Mars Trek tiles and remote fonts.
 
-## Limites connues
+### Quick verification
 
-- Le globe affiche des **images** : le relief est coloré, mais le terrain en 3D reste lisse.
-- La résolution des couches ne permet pas encore une navigation à l'échelle d'un astronaute à pied.
-- La **vitesse de marche** de l'outil de trajet (1,5 km/h) est une **hypothèse modifiable**, pas une valeur NASA.
-- Le trajet est tracé par l'utilisateur : il n'y a pas encore de calcul automatique évitant pentes, obstacles ou zones de radiation.
-- Les cinq étapes utilisent des waypoints représentatifs de la carte NASA/Mars Trek ; ils ne sont pas des coordonnées GPS officielles de toute une unité géologique.
+- The briefing screen loads without errors.
+- **Enter field map** opens only the map screen.
+- Mars starts focused on Gale Crater / Mount Sharp.
+- The sidebar toggle collapses and expands the side panel.
+- The globe uses the space released by the collapsed sidebar.
+- Hovering over a point of interest shows its information tooltip.
+- **Load these stops as a route** places the five mission points.
 
-## Prochaines étapes
+## Responsive testing
 
-- [x] Choisir le lieu et l'objectif scientifique de la mission
-- [x] Brancher les données des ressources officielles
-- [x] Ajouter des photos Curiosity et des descriptions aux étapes
-- [x] Ajouter un indicateur de radiation sourcé et un accès à l'archive météo REMS, sans inventer de prévision
-- [x] Ajouter cinq waypoints de carte NASA/Mars Trek pour permettre le zoom et l'itinéraire de démonstration
-- [ ] Remplacer les waypoints par des coordonnées officielles ponctuelles si une table NASA est publiée
-- [ ] Évaluer un calcul de trajet évitant les zones dangereuses
-- [ ] Enregistrer la vidéo de démonstration
-- [ ] Soumettre le projet avant la date limite (bouton « Submit for Judging »)
+Use Chrome DevTools with `Ctrl + Shift + M` and test:
 
-## Équipe
+- Phone: 375 × 667
+- Large phone: 390 × 844
+- Tablet: 768 × 1024
+- Desktop: 1280 × 800
 
-- _Nom 1 : rôle_
-- _Nom 2 : rôle_
+The sidebar stays on the side at every size and can be collapsed to give the globe more space.
 
-## Crédits
+## NASA data sources
 
-Données : NASA/JPL Mars Trek. Affichage 3D : [CesiumJS](https://cesium.com/platform/cesiumjs/).
+- [JPL Mars Trek](https://trek.nasa.gov/mars/) — 3D Mars exploration and imagery layers
+- [Mars Trek API / tiles](https://trek.nasa.gov/tiles/apidoc/trekAPI.html?body=mars) — tile service used by CesiumJS
+- [Curiosity’s Proposed Path up Mount Sharp](https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/) — annotated scientific route map
+- [USGS-NASA Planetary Geologic Mapping Program](https://astrogeology-usgs.hub.arcgis.com/pages/interactive-maps-mars) — geological mapping reference
+- [NASA Worldview](https://worldview.earthdata.nasa.gov/) — NASA Earthdata visual resource supplied for the challenge; not used as local Gale Crater weather
+- [Mars Perseverance Raw Images Gallery](https://mars.nasa.gov/mars2020/multimedia/raw-images/) — NASA rover image resource supplied for the challenge
+- [NASA Curiosity Science Instruments](https://science.nasa.gov/mission/msl-curiosity/science-instruments/) — REMS and RAD instrument information
+- [NASA Radiation Environment briefing](https://www.nasa.gov/wp-content/uploads/2016/05/mars_radiation_environment_nac_july_2017_finaltagged.pdf) — MSL/RAD surface dose-rate range
+- [NASA REMS Sol 1063 environmental profile](https://ntrs.nasa.gov/api/citations/20210010977/downloads/TM-20210010977.pdf) — historical REMS temperature profile
+- [NASA PDS REMS MODRDR archive](https://pds.nasa.gov/ds-view/pds/viewProfile.jsp?dsid=MSL-M-REMS-5-MODRDR-V1.0) — sol-by-sol weather archive
+- [NASA PDS RAD RDR archive](https://pds.nasa.gov/ds-view/pds/viewDataset.jsp?dsid=MSL-M-RAD-3-RDR-V1.0) — calibrated RAD data
+- [Curiosity: Clay-Bearing Unit](https://science.nasa.gov/photojournal/curiosity-surveys-the-clay-bearing-unit/)
+- [Curiosity: Greenheugh Pediment](https://science.nasa.gov/photojournal/curiositys-view-from-the-top-of-the-greenheugh-pediment/)
+- [Curiosity: Gediz Vallis Ridge](https://science.nasa.gov/photojournal/curiosity-views-gediz-vallis-ridge/)
+- [Curiosity: Gediz Vallis Channel](https://science.nasa.gov/photojournal/curiositys-view-within-gediz-vallis-channel/)
+- [Curiosity: Sulfate-bearing Unit](https://science.nasa.gov/photojournal/curiosity-looks-downslope-from-the-sulfate-unit/)
+
+NASA does not endorse non-U.S. Government entities and is not responsible for information on non-U.S. Government websites. Any external website must be used according to its own data-use terms.
+
+## Known limitations
+
+- Weather and radiation values are historical, not real-time.
+- Environmental values are not recalculated automatically for every route point.
+- The five stop positions are representative map waypoints, not an official NASA coordinate table for each geological unit.
+- The route tool does not yet automatically avoid steep slopes, rocks or radiation zones.
+- Relief is presented through imagery and MOLA shading; Cesium terrain remains visually smooth.
+- The default walking speed of 1.5 km/h is an adjustable assumption, not an operational NASA value.
+- Remote tiles and fonts require an internet connection.
+
+## Project status
+
+- [x] Mission briefing
+- [x] Interactive checklist
+- [x] 3D Mars globe
+- [x] Four Mars Trek layers
+- [x] Curiosity images and descriptions
+- [x] Historical radiation and weather indicators
+- [x] Responsive collapsible sidebar
+- [x] Hover information for points of interest
+- [x] Route tool and GeoJSON export
+- [ ] Automatic hazard-avoiding route calculation
+- [ ] Final testing on multiple computers
+- [ ] Demo video
+- [ ] Presentation slides
+- [ ] Space Apps submission
