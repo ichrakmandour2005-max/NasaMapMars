@@ -6,7 +6,8 @@ The interface is designed as a mission console: a briefing screen presents the m
 
 ## Team
 novaMIY
-
+Mandour Ichrak
+Ichi Mina
 ## Presentation
 
 - [novaMIY presentation (PowerPoint)](.codex-ppt-output/novaMIY_mars_eva_console_updated.pptx)
@@ -50,16 +51,7 @@ Each stop includes a description, a Curiosity ground image, a NASA source and a 
 
 The **Load these stops as a route** button loads the five waypoints into the route tool.
 
-### Route tool
-
-- Place route points manually on the globe
-- Load the five mission waypoints
-- Calculate distance on the Mars ellipsoid
-- Estimate walking time using an editable speed, set to 1.5 km/h by default
-- Undo the last point
-- Clear the route
-- Copy the route as GeoJSON
-
+ 
 ## Displayed data
 
 ### Radiation
@@ -92,7 +84,7 @@ The mission follows the geological transition described in NASA resources: clay-
 - Vanilla JavaScript
 - CesiumJS for the 3D globe and map entities
 - NASA/JPL Mars Trek WMTS tiles for Mars imagery
-- GeoJSON for route export
+  
 - `localStorage` for checklist persistence
 - Google Fonts / Fontshare typography:
   - Clash Display for headings
