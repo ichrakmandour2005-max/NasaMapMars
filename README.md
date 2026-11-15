@@ -10,8 +10,8 @@ Mandour Ichrak,
 Ichi Mina
 ## Presentation
 
-- [novaMIY presentation (PowerPoint)](.codex-ppt-output/novaMIY_mars_eva_console_updated.pptx)
-- [novaMIY presentation (PDF)](.codex-ppt-output/novaMIY_mars_eva_console_updated.pdf)
+- [novaMIY presentation (PowerPoint)](.codex-ppt-output/novaMIY_mars_eva_console_team_names.pptx)
+- [novaMIY presentation (PDF)](.codex-ppt-output/novaMIY_mars_eva_console_team_names.pdf)
 
 ## Features
 
