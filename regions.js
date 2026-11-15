@@ -8,10 +8,10 @@
 
   const STORE = "marsRegions";
   const REGIONS = [
-    { name: "Clay-Bearing Unit",    color: "#3fae3f" },
-    { name: "Greenheugh Pediment",  color: "#1fb5b0" },
-    { name: "Gediz Vallis Ridge",   color: "#e0405a" },
-    { name: "Sulfate-Bearing Unit", color: "#e8b020" }
+    { name: "Clay-Bearing Unit",    color: "#3fae3f", stop: 0 },
+    { name: "Greenheugh Pediment",  color: "#1fb5b0", stop: 1 },
+    { name: "Gediz Vallis Ridge",   color: "#e0405a", stop: 2 },
+    { name: "Sulfate-Bearing Unit", color: "#e8b020", stop: 4 }
   ];
   const el = (tag, cls, text) => {
     const e = document.createElement(tag);
@@ -22,20 +22,23 @@
   const toCart = p => Cesium.Cartesian3.fromDegrees(p[1], p[0], 0, MARS);   // p = [lat, lon]
 
   // Saved outlines: config.js first, otherwise this browser's storage
-  let shapes = REGIONS.map(() => null);
+  let shapes = REGIONS.map(() => null), savedLocally = false;
   if (typeof CONFIG !== "undefined" && Array.isArray(CONFIG.regions)) {
     CONFIG.regions.forEach((r, i) => { if (r && Array.isArray(r.points) && r.points.length >= 3) shapes[i] = r.points; });
   } else {
     try {
       const saved = JSON.parse(localStorage.getItem(STORE) || "null");
-      if (Array.isArray(saved)) shapes = REGIONS.map((_, i) => (Array.isArray(saved[i]) ? saved[i] : null));
+      if (Array.isArray(saved)) {
+        shapes = REGIONS.map((_, i) => (Array.isArray(saved[i]) ? saved[i] : null));
+        savedLocally = shapes.some(Boolean);
+      }
     } catch (e) { /* storage unavailable */ }
   }
 
   host.innerHTML = `
     <h2>Geologic regions</h2>
     <label class="layer"><input type="checkbox" id="rg-show" checked> Show regions</label>
-    <div class="muted">Approximate outlines traced by the team from NASA’s annotated route map. Not a mineral map.</div>
+    <div class="muted">Approximate outlines traced by the team from NASA’s annotated route map. Not a mineral map. Tap a region to open its stop.</div>
     <button type="button" id="rg-trace" class="poi">Trace the regions by clicking on the globe</button>
     <div class="zoombar"><button type="button" id="rg-finish" hidden>Finish region</button><button type="button" id="rg-cancel" hidden>Stop</button></div>
     <div class="muted" id="rg-msg"></div>
@@ -43,17 +46,23 @@
   const $ = id => host.querySelector("#" + id);
   const show = $("rg-show"), traceBtn = $("rg-trace"), finishBtn = $("rg-finish"), cancelBtn = $("rg-cancel");
   const msg = $("rg-msg"), code = $("rg-code");
+  const DEV = new URLSearchParams(location.search).has("dev");   // tracing tools only with index.html?dev
+  traceBtn.hidden = !DEV;
+  if (savedLocally) host.querySelector(".muted").textContent += " Warning: these outlines are saved only in this browser. Paste them into config.js so everyone sees them.";
 
   /* ---------- Drawing ---------- */
-  const ents = [];
+  const ents = [], picks = new Map();   // picks: region entity -> region index
   function draw() {
     ents.splice(0).forEach(e => viewer.entities.remove(e));
+    picks.clear();
     shapes.forEach((pts, i) => {
       if (!pts) return;
       const color = Cesium.Color.fromCssColorString(REGIONS[i].color);
       const cLat = pts.reduce((a, p) => a + p[0], 0) / pts.length, cLon = pts.reduce((a, p) => a + p[1], 0) / pts.length;
-      ents.push(viewer.entities.add({ show: show.checked, polygon: {
-        hierarchy: pts.map(toCart), material: color.withAlpha(0.35), height: 0, outline: true, outlineColor: color } }));
+      const poly = viewer.entities.add({ show: show.checked, polygon: {
+        hierarchy: pts.map(toCart), material: color.withAlpha(0.35), height: 0, outline: true, outlineColor: color } });
+      ents.push(poly);
+      picks.set(poly, i);
       ents.push(viewer.entities.add({ show: show.checked, position: toCart([cLat, cLon]), label: {
         text: REGIONS[i].name, font: "14px system-ui", fillColor: Cesium.Color.WHITE, outlineColor: Cesium.Color.BLACK,
         outlineWidth: 3, style: Cesium.LabelStyle.FILL_AND_OUTLINE, distanceDisplayCondition: new Cesium.DistanceDisplayCondition(0, 2.0e6) } }));
@@ -71,7 +80,6 @@
 
   function stop() {
     idx = -1; pts = [];
-    handler.removeInputAction(Cesium.ScreenSpaceEventType.LEFT_CLICK);
     viewer.scene.canvas.style.cursor = "";
     finishBtn.hidden = cancelBtn.hidden = true;
   }
@@ -107,13 +115,22 @@
     finishBtn.hidden = cancelBtn.hidden = false;
     viewer.scene.canvas.style.cursor = "crosshair";
     msg.textContent = prompt();
-    handler.setInputAction(click => {
+  });
+
+  // One click handler: adds a corner while tracing, otherwise opens the stop of the tapped region
+  handler.setInputAction(click => {
+    if (idx >= 0) {
       const p = viewer.camera.pickEllipsoid(click.position, MARS);
       if (!p) return;
       const c = Cesium.Cartographic.fromCartesian(p, MARS);
       pts.push([+Cesium.Math.toDegrees(c.latitude).toFixed(4), +Cesium.Math.toDegrees(c.longitude).toFixed(4)]);
-    }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-  });
+      return;
+    }
+    const picked = viewer.scene.pick(click.position);
+    if (picked && picked.id && picks.has(picked.id) && window.MarsMission) {
+      MarsMission.select(REGIONS[picks.get(picked.id)].stop);
+    }
+  }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
   finishBtn.addEventListener("click", finishRegion);
   cancelBtn.addEventListener("click", () => {
     stop();

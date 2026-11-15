@@ -57,7 +57,9 @@
 
   /* ---------- Interface ---------- */
   host.append(el("h2", "", "Safety"));
-  host.append(el("p", "muted", "The current hazard zones are examples, to be replaced with real data."));
+  host.append(el("p", "muted", CONFIG.hazards.length
+    ? "Hazard zones are approximations: check each label for its source."
+    : "No hazard zones defined yet. Add one only when its source data can be named."));
 
   const toggle = el("label", "layer");
   const check = el("input");
@@ -74,6 +76,10 @@
     result.replaceChildren();
     if (wps.length < 2) {
       result.append(el("p", "muted", "Draw a route to analyze it."));
+      return;
+    }
+    if (!CONFIG.hazards.length) {
+      result.append(el("p", "muted", "No hazard zones defined yet: no safety analysis available."));
       return;
     }
     const pts = samples(wps);

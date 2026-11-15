@@ -21,7 +21,7 @@
   html, body { margin: 0; height: 100%; background: #120c0a; font-family: system-ui, "Segoe UI", sans-serif; color: var(--sand); }
   #map { position: absolute; inset: 0; }
   #panel {
-    position: absolute; top: 12px; left: 12px; width: 300px; max-height: calc(100% - 24px); overflow-y: auto;
+    position: absolute; top: 60px; left: 12px; width: 300px; max-height: calc(100% - 72px); overflow-y: auto;
     background: var(--panel); border: 1px solid var(--panel-line); border-radius: 10px; padding: 16px;
     box-sizing: border-box; z-index: 10;
   }
@@ -47,11 +47,25 @@
   #alt { margin-top: 6px; font-size: 12px; color: var(--muted); }
   #info { margin-top: 12px; font-size: 13px; color: var(--muted); line-height: 1.45; min-height: 2.8em; }
   #status { margin-top: 10px; font-size: 12px; color: #e8a58f; }
-  @media (max-width: 600px) { #panel { width: calc(100% - 24px); max-height: 45%; } }
+  #panelToggle {
+    position: absolute; top: 12px; left: 12px; z-index: 11; height: 40px; padding: 0 14px; font: inherit; font-size: 14px;
+    color: var(--sand); background: var(--panel); border: 1px solid var(--panel-line); border-radius: 8px; cursor: pointer;
+  }
+  #panelToggle:focus-visible { outline: 2px solid var(--sky); outline-offset: 2px; }
+  button, input, label { touch-action: manipulation; }
+  @media (max-width: 900px) { #panel { width: min(340px, calc(100% - 24px)); } }
+  @media (max-width: 600px) { #panel { width: calc(100% - 24px); max-height: 45%; top: auto; bottom: 12px; } }
+  @media (pointer: coarse) {
+    button.poi, .zoombar button, #panelToggle { min-height: 44px; }
+    label.layer { padding: 10px 0; }
+    input[type=checkbox] { width: 22px; height: 22px; }
+  }
 </style>
 </head>
 <body>
 <div id="map"></div>
+
+<button type="button" id="panelToggle" aria-controls="panel" aria-expanded="true">Hide panel</button>
 
 <aside id="panel">
   <h1>Mars in 3D</h1>
@@ -73,7 +87,7 @@
     <button id="zoomGlobal" aria-label="Show the whole planet">Global view</button>
   </div>
   <div id="alt">Altitude: –</div>
-  <div class="muted">Scroll to zoom, drag to rotate, Ctrl + drag to tilt.</div>
+  <div class="muted">Pinch or two-finger scroll to zoom, drag to rotate.</div>
 
   <h2>Places of interest</h2>
   <div id="pois"></div>
@@ -224,6 +238,23 @@ POIS.forEach(p => {
     });
   });
   poiBox.appendChild(btn);
+});
+
+/* ============ 5. Tablet and touchpad comfort ============ */
+
+// Show or hide the side panel to free the whole screen for the map
+const panel = document.getElementById("panel"), panelToggle = document.getElementById("panelToggle");
+panelToggle.addEventListener("click", () => {
+  panel.hidden = !panel.hidden;
+  panelToggle.textContent = panel.hidden ? "Show panel" : "Hide panel";
+  panelToggle.setAttribute("aria-expanded", String(!panel.hidden));
+});
+
+// Keyboard fallback for zooming (+ and −), ignored while typing in a field
+window.addEventListener("keydown", e => {
+  if (e.target.matches("input, textarea")) return;
+  if (e.key === "+" || e.key === "=") viewer.camera.zoomIn(cameraHeight() * 0.4);
+  if (e.key === "-" || e.key === "_") viewer.camera.zoomOut(cameraHeight() * 0.6);
 });
 </script>
 

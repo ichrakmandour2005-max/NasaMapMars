@@ -5,30 +5,30 @@
  * coordinates remain null until the team verifies them in Mars Trek. */
 const CONFIG = {
   mission: {
-
-
     title: "Curiosity: Climbing Mount Sharp",
     period: "Curiosity mission in Gale Crater — proposed route map published May 15, 2019",
     objective: "Follow the geological targets identified on NASA's route map, from clay-bearing terrain toward sulfate-bearing units.",
     story: "A science reconnaissance mission in Gale Crater. Mars Trek describes Mount Sharp as layered rock deposits containing clays, sulfates, and salts: sedimentary minerals associated with past water activity.",
     source: {
       label: "NASA — Curiosity's Proposed Path up Mount Sharp",
-      url: "https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/",
+      url: "https://science.nasa.gov/resource/curiositys-proposed-path-up-mount-sharp/"
     }
-
   },
 
   // NASA map targets, in the proposed order of travel.
-  // level: "ok" | "warning" | "danger"
+  // level: "ok" | "warning" | "danger" | "unknown"
+  //   Use "unknown" (shown as "Not assessed") unless the reason for the level can be written in `note`.
   // Coordinates will be added after verification in Mars Trek.
   // Each photo below is an official Curiosity image from NASA Photojournal.
+  // photoCredit: verify the credit line on each Photojournal page.
   steps: [
     {
       name: "Clay-Bearing Unit",
-      lat: null, lon: null, level: "ok",
+      lat: null, lon: null, level: "unknown",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia23/pia23139/PIA23139.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam mosaic of the clay-bearing unit (Sol 2309).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-surveys-the-clay-bearing-unit/",
+      photoCredit: "NASA/JPL-Caltech/MSSS",
       note: "First target on the NASA route. The astronaut documents clay-rich layers and compares them with nearby landforms. NASA's orbital observations found a strong clay signal here, indicating that water may have played a role in its formation."
     },
     {
@@ -37,6 +37,7 @@ const CONFIG = {
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia23/pia23974/PIA23974.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's view from the top of Greenheugh Pediment (Sol 2729).",
       photoSource: "https://science.nasa.gov/photojournal/curiositys-view-from-the-top-of-the-greenheugh-pediment/",
+      photoCredit: "NASA/JPL-Caltech/MSSS",
       note: "An intermediate landform identified on the proposed route. Curiosity reached this steep feature in 2020; the view shows its crusty sandstone cap and looks back toward the clay-bearing unit."
     },
     {
@@ -45,22 +46,25 @@ const CONFIG = {
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26019/PIA26019.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam panorama below Gediz Vallis Ridge (Sol 3923).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-views-gediz-vallis-ridge/",
+      photoCredit: "NASA/JPL-Caltech/MSSS",
       note: "A ridge named on the NASA map. Curiosity reached it after a difficult climb; NASA describes it as preserving evidence from one of the last wet periods in this area of Mars."
     },
     {
       name: "Gediz Vallis Channel",
-      lat: null, lon: null, level: "warning",
+      lat: null, lon: null, level: "unknown",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26410/PIA26410.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam panorama inside Gediz Vallis Channel (Sols 4311–4312).",
       photoSource: "https://science.nasa.gov/photojournal/curiositys-view-within-gediz-vallis-channel/",
+      photoCredit: "NASA/JPL-Caltech/MSSS",
       note: "A channel shown in the upper section of the route. Curiosity's panorama records a field of bright sulfur stones; the rover exposed the first pure sulfur discovered on Mars in this channel."
     },
     {
       name: "Sulfate-Bearing Unit",
-      lat: null, lon: null, level: "ok",
+      lat: null, lon: null, level: "unknown",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26551/PIA26551.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity looks downslope from the sulfate-bearing unit (Sol 4447).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-looks-downslope-from-the-sulfate-unit/",
+      photoCredit: "NASA/JPL-Caltech/MSSS",
       note: "The upper target of the proposed route. The astronaut studies sulfate-bearing layers, which help scientists compare the changing environments recorded in Mount Sharp's successive rock layers."
     }
   ],

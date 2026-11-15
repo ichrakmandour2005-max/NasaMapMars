@@ -6,6 +6,7 @@
   "use strict";
   const host = document.getElementById("picker-ui");
   if (!host || typeof viewer === "undefined") return;
+  if (!new URLSearchParams(location.search).has("dev")) return;   // team tool: only with index.html?dev
 
   host.innerHTML = `
     <h2>Hazard picker (team tool)</h2>

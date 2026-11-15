@@ -23,7 +23,7 @@ const CONFIG = {
   steps: [
     {
       name: "Clay-Bearing Unit",
-      lat: -4.7297, lon: 137.3857, coordinateType: "NASA map waypoint", level: "ok",
+      lat: null, lon: null, coordinateType: "NASA map waypoint", level: "ok",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia23/pia23139/PIA23139.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam mosaic of the clay-bearing unit (Sol 2309).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-surveys-the-clay-bearing-unit/",
@@ -31,7 +31,7 @@ const CONFIG = {
     },
     {
       name: "Greenheugh Pediment",
-      lat: -4.63, lon: 137.41, coordinateType: "NASA map waypoint", level: "warning",
+      lat: null, lon:null, coordinateType: "NASA map waypoint", level: "warning",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia23/pia23974/PIA23974.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's view from the top of Greenheugh Pediment (Sol 2729).",
       photoSource: "https://science.nasa.gov/photojournal/curiositys-view-from-the-top-of-the-greenheugh-pediment/",
@@ -39,7 +39,7 @@ const CONFIG = {
     },
     {
       name: "Gediz Vallis Ridge",
-      lat: -4.77, lon: 137.395, coordinateType: "NASA map waypoint", level: "warning",
+      lat: null, lon: null, coordinateType: "NASA map waypoint", level: "warning",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26019/PIA26019.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam panorama below Gediz Vallis Ridge (Sol 3923).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-views-gediz-vallis-ridge/",
@@ -47,7 +47,7 @@ const CONFIG = {
     },
     {
       name: "Gediz Vallis Channel",
-      lat: -4.85, lon: 137.44, coordinateType: "NASA map waypoint", level: "warning",
+      lat: null, lon: null, coordinateType: "NASA map waypoint", level: "warning",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26410/PIA26410.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam panorama inside Gediz Vallis Channel (Sols 4311–4312).",
       photoSource: "https://science.nasa.gov/photojournal/curiositys-view-within-gediz-vallis-channel/",
@@ -55,7 +55,7 @@ const CONFIG = {
     },
     {
       name: "Mg-Sulfate Bearing Unit",
-      lat: -4.75, lon: 137.42, coordinateType: "NASA map waypoint", level: "ok",
+      lat: null, lon: null, coordinateType: "NASA map waypoint", level: "ok",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26551/PIA26551.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity looks downslope from the sulfate-bearing unit (Sol 4447).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-looks-downslope-from-the-sulfate-unit/",
