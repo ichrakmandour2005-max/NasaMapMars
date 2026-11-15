@@ -7,7 +7,7 @@
 const CONFIG = {
   mission: {
     title: "Curiosity: Climbing Mount Sharp",
-    period: "Curiosity mission in Gale Crater — proposed route map published May 15, 2019",
+    period: "Curiosity mission in Gale Crater",
     objective: "Follow the geological targets identified on NASA's route map, from clay-bearing terrain toward sulfate-bearing units.",
     story: "A science reconnaissance mission in Gale Crater. Mars Trek describes Mount Sharp as layered rock deposits containing clays, sulfates, and salts: sedimentary minerals associated with past water activity.",
     source: {

@@ -1,0 +1,1 @@
+(function(){"use strict";const open=document.getElementById('open-map');if(!open||typeof viewer==='undefined'||typeof Cesium==='undefined')return;open.addEventListener('click',()=>setTimeout(()=>viewer.camera.flyTo({destination:Cesium.Cartesian3.fromDegrees(137.45,-5,250000,MARS),duration:1.2}),70))})();
