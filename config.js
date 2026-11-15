@@ -1,8 +1,9 @@
 /* config.js: mission content (Person B).
  * Sources approved by the team: NASA Mars Trek and NASA's
  * “Curiosity's Proposed Path up Mount Sharp” map.
- * The five targets have no published coordinate list in those sources, so
- * coordinates remain null until the team verifies them in Mars Trek. */
+ * Coordinates below are representative map waypoints selected from the NASA
+ * annotated Mount Sharp route and Mars Trek layers. They are not rover GPS
+ * fixes for the full geological units. */
 const CONFIG = {
   mission: {
     title: "Curiosity: Climbing Mount Sharp",
@@ -17,12 +18,12 @@ const CONFIG = {
 
   // NASA map targets, in the proposed order of travel.
   // level: "ok" | "warning" | "danger"
-  // Coordinates will be added after verification in Mars Trek.
+  // Coordinates are map waypoints; coordinateType makes that limitation visible.
   // Each photo below is an official Curiosity image from NASA Photojournal.
   steps: [
     {
       name: "Clay-Bearing Unit",
-      lat: null, lon: null, level: "ok",
+      lat: -4.7297, lon: 137.3857, coordinateType: "NASA map waypoint", level: "ok",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia23/pia23139/PIA23139.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam mosaic of the clay-bearing unit (Sol 2309).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-surveys-the-clay-bearing-unit/",
@@ -30,7 +31,7 @@ const CONFIG = {
     },
     {
       name: "Greenheugh Pediment",
-      lat: null, lon: null, level: "warning",
+      lat: -4.63, lon: 137.41, coordinateType: "NASA map waypoint", level: "warning",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia23/pia23974/PIA23974.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's view from the top of Greenheugh Pediment (Sol 2729).",
       photoSource: "https://science.nasa.gov/photojournal/curiositys-view-from-the-top-of-the-greenheugh-pediment/",
@@ -38,7 +39,7 @@ const CONFIG = {
     },
     {
       name: "Gediz Vallis Ridge",
-      lat: null, lon: null, level: "warning",
+      lat: -4.77, lon: 137.395, coordinateType: "NASA map waypoint", level: "warning",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26019/PIA26019.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam panorama below Gediz Vallis Ridge (Sol 3923).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-views-gediz-vallis-ridge/",
@@ -46,15 +47,15 @@ const CONFIG = {
     },
     {
       name: "Gediz Vallis Channel",
-      lat: null, lon: null, level: "warning",
+      lat: -4.85, lon: 137.44, coordinateType: "NASA map waypoint", level: "warning",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26410/PIA26410.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity's Mastcam panorama inside Gediz Vallis Channel (Sols 4311–4312).",
       photoSource: "https://science.nasa.gov/photojournal/curiositys-view-within-gediz-vallis-channel/",
       note: "A channel shown in the upper section of the route. Curiosity's panorama records a field of bright sulfur stones; the rover exposed the first pure sulfur discovered on Mars in this channel."
     },
     {
-      name: "Sulfate-Bearing Unit",
-      lat: null, lon: null, level: "ok",
+      name: "Mg-Sulfate Bearing Unit",
+      lat: -4.75, lon: 137.42, coordinateType: "NASA map waypoint", level: "ok",
       photo: "https://assets.science.nasa.gov/dynamicimage/assets/science/psd/photojournal/pia/pia26/pia26551/PIA26551.jpg?fit=clip&h=600&w=1200",
       photoCaption: "Curiosity looks downslope from the sulfate-bearing unit (Sol 4447).",
       photoSource: "https://science.nasa.gov/photojournal/curiosity-looks-downslope-from-the-sulfate-unit/",
